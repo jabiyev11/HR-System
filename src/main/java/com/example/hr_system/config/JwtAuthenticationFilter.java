@@ -27,6 +27,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = getTokenFromRequest(request);
 
+        if (!StringUtils.hasText(token)) {
+            filterChain.doFilter(request, response); // Allow requests without tokens to pass
+            return;
+        }
+
         if (StringUtils.hasText(token)) {
             try {
                 // Extract username from the token
@@ -45,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        filterChain.doFilter(request, response);
+
     }
 
     // Method to extract the token from the request

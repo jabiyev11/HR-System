@@ -40,7 +40,11 @@ public class AuthService {
         }
 
         Role defaultRole = roleRepository.findByName("USER")
-                .orElseThrow(() -> new RuntimeException("Default role not found"));
+                .orElseGet(() ->{
+                    Role newRole = new Role();
+                    newRole.setName("USER");
+                    return roleRepository.save(newRole);
+                });
 
         User user = new User();
 
@@ -58,7 +62,7 @@ public class AuthService {
         User user = userRepository.findByUsername(authRequest.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid username, Try again"));
 
-        if(passwordEncoder.matches(authRequest.getPassword(), user.getPassword())){
+        if(!passwordEncoder.matches(authRequest.getPassword(), user.getPassword())){
             throw new WrongPasswordException("Invalid password, Try again");
         }
 

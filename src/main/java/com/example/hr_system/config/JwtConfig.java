@@ -1,11 +1,8 @@
 package com.example.hr_system.config;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Service;
 
 
 @Configuration
@@ -13,8 +10,7 @@ import org.springframework.stereotype.Service;
 @Data
 public class JwtConfig {
 
-//    @Value("${application.security.jwt.secret-key}")
     private String secretKey;
-//    @Value("${application.security.jwt.expiration}")
-    private Long jwtExpiration;
+
+    private Long expiration;
 }

@@ -33,7 +33,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("api/auth/**", "/login", "/register").hasRole("USER")
+                        .requestMatchers("api/auth/**").permitAll()
                         .requestMatchers("api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated()
@@ -47,9 +47,10 @@ public class SecurityConfig {
 
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
+        auth.authenticationProvider(authenticationProvider());
+        return auth.build();
     }
 
     @Bean
