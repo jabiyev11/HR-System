@@ -2,8 +2,10 @@ package com.example.hr_system;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
+@EnableConfigurationProperties
 public class HrSystemApplication {
 
 	public static void main(String[] args) {

@@ -2,6 +2,7 @@ spring:
   application:
     name: HR-System
 
+
   datasource:
     url: jdbc:postgresql://localhost:5432/HR-System
     username: postgres
@@ -15,3 +16,8 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 
+application:
+  security:
+    jwt:
+      secret-key: da1jwd123kn1dna32wie1e12312and3po146463dw3and2akd3nqw
+      expiration: 86400000
