@@ -28,32 +28,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = getTokenFromRequest(request);
 
         if (!StringUtils.hasText(token)) {
-            filterChain.doFilter(request, response); // Allow requests without tokens to pass
+            filterChain.doFilter(request, response);
             return;
         }
 
         if (StringUtils.hasText(token)) {
             try {
-                // Extract username from the token
+
                 String username = jwtService.extractUsername(token);
 
-                // Load user details
-                CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(username);
 
-                // Validate the token
+                CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+
+
                 if (jwtService.validateToken(token, userDetails)) {
                     Authentication authentication = new JwtAuthenticationToken(userDetails, null);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else{
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Invalid or expired JWT token");
+                    return;
                 }
             } catch (JwtException | IllegalArgumentException e) {
                 logger.error("Invalid JWT token", e);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Invalid or expired JWT token");
+                return;
             }
+
+            filterChain.doFilter(request, response);
         }
 
 
     }
 
-    // Method to extract the token from the request
+
     private String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {

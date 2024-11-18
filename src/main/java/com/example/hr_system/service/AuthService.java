@@ -2,10 +2,12 @@ package com.example.hr_system.service;
 
 import com.example.hr_system.config.CustomUserDetails;
 import com.example.hr_system.dto.AuthRequest;
-import com.example.hr_system.dto.UserRegisterDto;
+import com.example.hr_system.dto.UserRegisterRequest;
 import com.example.hr_system.entity.Role;
 import com.example.hr_system.entity.User;
+import com.example.hr_system.exception.EmailRelatedException;
 import com.example.hr_system.exception.UserAlreadyExistsException;
+import com.example.hr_system.exception.UserNotVerifiedException;
 import com.example.hr_system.exception.WrongPasswordException;
 import com.example.hr_system.repository.RoleRepository;
 import com.example.hr_system.repository.UserRepository;
@@ -31,11 +33,13 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final OtpService otpService;
+    private final EmailService emailService;
 
 
-    public void registerUser(UserRegisterDto userRegisterDto) throws UserAlreadyExistsException {
+    public void registerUser(UserRegisterRequest userRegisterRequest) throws UserAlreadyExistsException {
 
-        if(userRepository.existsByUsername(userRegisterDto.getUsername())){
+        if(userRepository.existsByUsername(userRegisterRequest.getUsername())){
             throw new UserAlreadyExistsException("Username is already taken");
         }
 
@@ -48,22 +52,29 @@ public class AuthService {
 
         User user = new User();
 
-        user.setEmail(userRegisterDto.getEmail());
-        user.setUsername(userRegisterDto.getUsername());
-        user.setPassword(passwordEncoder.encode(userRegisterDto.getPassword()));
+        user.setEmail(userRegisterRequest.getEmail());
+        user.setUsername(userRegisterRequest.getUsername());
+        user.setPassword(passwordEncoder.encode(userRegisterRequest.getPassword()));
         user.setRoles(Collections.singleton(defaultRole));
         user.setCreatedAt(LocalDateTime.now());
+
+        String otp = otpService.generateOtp(userRegisterRequest.getEmail());
+        emailService.sendOtpEmail(userRegisterRequest.getEmail(), otp);
 
         userRepository.save(user);
     }
 
-    public String login(AuthRequest authRequest) throws WrongPasswordException {
+    public String login(AuthRequest authRequest) throws Exception {
 
         User user = userRepository.findByUsername(authRequest.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid username, Try again"));
 
         if(!passwordEncoder.matches(authRequest.getPassword(), user.getPassword())){
             throw new WrongPasswordException("Invalid password, Try again");
+        }
+
+        if(!user.isVerified()){
+            throw new UserNotVerifiedException("Check your email for OTP verification");
         }
 
         Authentication authentication = authenticationManager.authenticate(
@@ -75,5 +86,22 @@ public class AuthService {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
         return jwtService.generateToken(userDetails);
+    }
+
+    public void verifyOtp(String email, String otp) throws EmailRelatedException {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EmailRelatedException("Invalid email address"));
+
+        if(user.isVerified()){
+            throw new EmailRelatedException("User is already verified");
+        }
+
+        if(!otpService.validateOtp(email, otp)){
+            throw new EmailRelatedException("Invalid or expired OTP");
+        }
+
+        user.setVerified(true);
+        userRepository.save(user);
     }
 }
