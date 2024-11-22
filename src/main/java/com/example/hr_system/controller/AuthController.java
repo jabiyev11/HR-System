@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
-    private final OtpService otpService;
 
 
     @PostMapping("/login")
@@ -42,5 +41,21 @@ public class AuthController {
     public String verifyOtp(@RequestParam String email, @RequestParam String otp) throws Exception {
         authService.verifyOtp(email, otp);
         return "Your email verified successfully";
+    }
+
+
+    @GetMapping("/login")
+    public String getLoginPage(){
+        return "login";
+    }
+
+    @GetMapping("/sign-up")
+    public String getSignupPage(){
+        return "signUp";
+    }
+
+    @GetMapping("/otpVerification")
+    public String getOtpPage(){
+        return "otpVerification";
     }
 }

@@ -1,0 +1,24 @@
+document.getElementById("loginForm").addEventListener("submit", function (event){
+    event.preventDefault();
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    fetch("api/auth/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({username, password}),
+    })
+
+        .then((response) => response.json())
+        .then((data) => {
+            if(data.success){
+                alert("Login successful!");
+                window.location.href = "/html/dashboard.html";
+            }else{
+                alert(data.message || "Invalid Credentials");
+            }
+        })
+        .catch((error) => console.error("Error: ", error));
+})
