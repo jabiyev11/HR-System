@@ -4,15 +4,19 @@ package com.example.hr_system.controller;
 import com.example.hr_system.dto.AuthRequest;
 import com.example.hr_system.dto.AuthResponse;
 import com.example.hr_system.dto.UserRegisterRequest;
+import com.example.hr_system.dto.UserRegisterResponse;
 import com.example.hr_system.exception.InvalidOtpException;
+import com.example.hr_system.exception.UserAlreadyExistsException;
 import com.example.hr_system.service.AuthService;
 import com.example.hr_system.service.OtpService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
@@ -30,9 +34,14 @@ public class AuthController {
 
     @PostMapping("/sign-up")
     @ResponseStatus(HttpStatus.CREATED)
-    public String register(@Valid @RequestBody UserRegisterRequest userRegisterRequest) throws Exception{
-        authService.registerUser(userRegisterRequest);
-        return "User registered successfully. Please check your email for OTP";
+    public UserRegisterResponse register(@Valid @RequestBody UserRegisterRequest userRegisterRequest) throws Exception{
+        try {
+            authService.registerUser(userRegisterRequest);
+            return new UserRegisterResponse(true, "Signup successful! OTP sent to your email");
+        } catch (UserAlreadyExistsException e) {
+            return new UserRegisterResponse(false, "Problem happened during sign up!");
+        }
+
     }
 
 
@@ -42,7 +51,6 @@ public class AuthController {
         authService.verifyOtp(email, otp);
         return "Your email verified successfully";
     }
-
 
     @GetMapping("/login")
     public String getLoginPage(){
@@ -58,4 +66,5 @@ public class AuthController {
     public String getOtpPage(){
         return "otpVerification";
     }
+
 }

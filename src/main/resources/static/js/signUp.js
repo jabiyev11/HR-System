@@ -5,7 +5,7 @@ document.getElementById("signUpForm").addEventListener("submit", function (event
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
-    fetch("api/auth/sign-up", {
+    fetch("/api/auth/sign-up", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -13,11 +13,18 @@ document.getElementById("signUpForm").addEventListener("submit", function (event
         body: JSON.stringify({username, email, password})
     })
 
-        .then((response) => response.json())
+        .then((response) => {
+            if(!response.ok){
+                throw new Error(`Error: ${response.statusText}`);
+            }
+
+            return response.json();
+        })
         .then((data) => {
+            console.log("Data: ", data)
             if (data.success) {
                 alert("Sign Up successful! Verify your account using the OTP sent to your email");
-                window.location.href = `/html/otpVerification.html?email=${encodeURIComponent(email)}`;
+                window.location.href = "/templates/otpVerification.html";
             } else {
                 alert(data.message || "Sign Up failed!");
             }

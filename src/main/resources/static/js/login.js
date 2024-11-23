@@ -3,7 +3,7 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    fetch("api/auth/login", {
+    fetch("/api/auth/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -15,7 +15,7 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
         .then((data) => {
             if(data.success){
                 alert("Login successful!");
-                window.location.href = "/html/dashboard.html";
+                window.location.href = "/dashboard";
             }else{
                 alert(data.message || "Invalid Credentials");
             }

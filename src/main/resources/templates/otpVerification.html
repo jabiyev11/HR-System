@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OTP Verification</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
         <h2>OTP Validation</h2>
@@ -14,7 +14,7 @@
         <button type="submit">Validate OTP</button>
         </form>
 
-        <a href="/html/signUp.html">Go back to Sign Up</a>
+        <a href="/api/auth/sign-up">Go back to Sign Up</a>
 
         <script src="/js/otp.js" defer></script>
 </body>

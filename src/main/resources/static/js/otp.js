@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function (){
         event.preventDefault();
         const otp = document.getElementById("otp").value;
 
-        fetch("api/auth/verify-otp", {
+        fetch("/api/auth/verify-otp", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function (){
             .then((data) => {
                 if(data.success){
                     alert("OTP validated successfully! You can now log in");
-                    window.location.href = "/html/login.html";
+                    window.location.href = "/templates/login.html";
                 }else{
                     alert(data.message || "OTP validation failed");
                 }
