@@ -13,10 +13,11 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
 
         .then((response) => response.json())
         .then((data) => {
-            if(data.success){
+            if(data.accessToken){
                 alert("Login successful!");
-                window.location.href = "/dashboard";
+                window.location.href = "/api/auth/dashboard";
             }else{
+                console.log("Data: ", data)
                 alert(data.message || "Invalid Credentials");
             }
         })

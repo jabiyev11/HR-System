@@ -24,9 +24,9 @@ document.getElementById("signUpForm").addEventListener("submit", function (event
             console.log("Data: ", data)
             if (data.success) {
                 alert("Sign Up successful! Verify your account using the OTP sent to your email");
-                window.location.href = "/templates/otpVerification.html";
+                window.location.href = "/api/auth/verify-otp";
             } else {
-                alert(data.message || "Sign Up failed!");
+                alert(data.message || "Sign Up failed!"); //modal
             }
         })
         .catch((error) => console.error("Error: ", error));

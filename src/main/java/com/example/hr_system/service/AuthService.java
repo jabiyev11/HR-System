@@ -1,8 +1,7 @@
 package com.example.hr_system.service;
 
 import com.example.hr_system.config.CustomUserDetails;
-import com.example.hr_system.dto.AuthRequest;
-import com.example.hr_system.dto.UserRegisterRequest;
+import com.example.hr_system.dto.*;
 import com.example.hr_system.entity.Role;
 import com.example.hr_system.entity.User;
 import com.example.hr_system.exception.EmailRelatedException;
@@ -37,7 +36,7 @@ public class AuthService {
     private final EmailService emailService;
 
 
-    public void registerUser(UserRegisterRequest userRegisterRequest) throws UserAlreadyExistsException {
+    public UserRegisterResponse registerUser(UserRegisterRequest userRegisterRequest) throws UserAlreadyExistsException {
 
         if(userRepository.existsByUsername(userRegisterRequest.getUsername())){
             throw new UserAlreadyExistsException("Username is already taken");
@@ -50,21 +49,27 @@ public class AuthService {
                     return roleRepository.save(newRole);
                 });
 
-        User user = new User();
+        try {
+            User user = new User();
 
-        user.setEmail(userRegisterRequest.getEmail());
-        user.setUsername(userRegisterRequest.getUsername());
-        user.setPassword(passwordEncoder.encode(userRegisterRequest.getPassword()));
-        user.setRoles(Collections.singleton(defaultRole));
-        user.setCreatedAt(LocalDateTime.now());
+            user.setEmail(userRegisterRequest.getEmail());
+            user.setUsername(userRegisterRequest.getUsername());
+            user.setPassword(passwordEncoder.encode(userRegisterRequest.getPassword()));
+            user.setRoles(Collections.singleton(defaultRole));
+            user.setCreatedAt(LocalDateTime.now());
 
-        String otp = otpService.generateOtp(userRegisterRequest.getEmail());
-        emailService.sendOtpEmail(userRegisterRequest.getEmail(), otp);
+            String otp = otpService.generateOtp(userRegisterRequest.getEmail());
+            emailService.sendOtpEmail(userRegisterRequest.getEmail(), otp);
 
-        userRepository.save(user);
+            userRepository.save(user);
+            return new UserRegisterResponse(true, "Signup successful! OTP sent to your email");
+
+        } catch (Exception e) {
+            return new UserRegisterResponse(false, "Problem happened during sign up!");
+        }
     }
 
-    public String login(AuthRequest authRequest) throws Exception {
+    public AuthResponse login(AuthRequest authRequest) throws Exception {
 
         User user = userRepository.findByUsername(authRequest.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid username, Try again"));
@@ -85,23 +90,31 @@ public class AuthService {
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        return jwtService.generateToken(userDetails);
+        String accessToken = jwtService.generateToken(userDetails);
+
+        return new AuthResponse(accessToken);
     }
 
-    public void verifyOtp(String email, String otp) throws EmailRelatedException {
+    public OtpVerificationResponse verifyOtp(String email, String otp) throws EmailRelatedException {
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EmailRelatedException("Invalid email address"));
+        try {
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new EmailRelatedException("Invalid email address"));
 
-        if(user.isVerified()){
-            throw new EmailRelatedException("User is already verified");
+            if(user.isVerified()){
+                throw new EmailRelatedException("User is already verified");
+            }
+
+            if(!otpService.validateOtp(email, otp)){
+                throw new EmailRelatedException("Invalid or expired OTP");
+            }
+
+            user.setVerified(true);
+            userRepository.save(user);
+
+            return new OtpVerificationResponse(true, "OTP verified successfully");
+        } catch (EmailRelatedException e) {
+            return new OtpVerificationResponse(false, "OTP mismatch");
         }
-
-        if(!otpService.validateOtp(email, otp)){
-            throw new EmailRelatedException("Invalid or expired OTP");
-        }
-
-        user.setVerified(true);
-        userRepository.save(user);
     }
 }

@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function (){
             .then((data) => {
                 if(data.success){
                     alert("OTP validated successfully! You can now log in");
-                    window.location.href = "/templates/login.html";
+                    window.location.href = "/api/auth/login";
                 }else{
                     alert(data.message || "OTP validation failed");
                 }
