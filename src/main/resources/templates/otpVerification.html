@@ -5,16 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OTP Verification</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 <body>
-        <h2>OTP Validation</h2>
-        <form id="otpForm">
-            <p id="userInfo"></p>
-            <input type="text" id="otp" placeholder="Enter OTP" required>
-        <button type="submit">Validate OTP</button>
-        </form>
 
-        <a href="/api/auth/sign-up">Go back to Sign Up</a>
+    <header>
+        <h1>Secure Your Account</h1>
+    </header>
+
+    <main>
+        <h2>OTP Validation</h2>
+        <p id="userInfo">Enter the OTP sent to your email</p>
+        <form id="otpForm">
+            <div class="form-group">
+                <label for="otp">OTP:</label>
+                <input type="text" id="otp" placeholder="Enter OTP" required>
+            </div>
+            <button type="submit">Validate OTP</button>
+        </form>
+        <p>Go back to <a href="/api/auth/sign-up">Sign Up</a></p>
+    </main>
 
         <script src="/js/otp.js" defer></script>
 </body>

@@ -5,16 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 <body>
-    <h2>Sign Up</h2>
+
+    <header>
+        <h1>Welcome to Our Service</h1>
+    </header>
+
+    <main>
+    <h2>Create an Account</h2>
     <form id="signUpForm">
+        <div class="form-group">
+            <label for="username">Username:</label>
             <input type="text" id="username" placeholder="Enter Username" required/>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
             <input type="email" id="email" placeholder="Enter Email" required/>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
             <input type="password" id="password" placeholder="Enter Password" required/>
+        </div>
         <button type="submit">Sign Up</button>
     </form>
-    <a href="/api/auth/login">Already have an account? Log in</a>
+    <p>Already have an account? <a href="/api/auth/login">Log in</a></p>
+    </main>
+
+
     <script src="/js/signUp.js" defer></script>
 </body>
 </html>

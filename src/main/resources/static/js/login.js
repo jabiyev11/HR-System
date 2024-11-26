@@ -1,4 +1,4 @@
-document.getElementById("loginForm").addEventListener("submit", function (event){
+document.getElementById("loginForm").addEventListener("submit", function (event) {
     event.preventDefault();
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
@@ -13,11 +13,20 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
 
         .then((response) => response.json())
         .then((data) => {
-            if(data.accessToken){
-                alert("Login successful!");
-                window.location.href = "/api/auth/dashboard";
-            }else{
-                console.log("Data: ", data)
+            if (data.accessToken) {
+                Toastify({
+                    text: "Login successful!",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#4CAF50", // Success green
+                }).showToast();
+
+                setTimeout(() => {
+                    window.location.href = "/api/auth/dashboard";
+                }, 3000);
+            } else {
                 alert(data.message || "Invalid Credentials");
             }
         })

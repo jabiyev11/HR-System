@@ -1,123 +1,91 @@
-/* styles.css */
-body {
-    font-family: Arial, sans-serif;
+/* Basic Reset */
+* {
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #ecf0f1; /* Light grey background */
-    color: #333;
-}
-
-.auth-container {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;  /* Slightly larger radius for a softer look */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Deeper shadow for emphasis */
-    width: 100%;
-    max-width: 450px;
     box-sizing: border-box;
 }
 
-.auth-container h2 {
-    margin-bottom: 25px;
-    font-size: 28px;
-    color: #333;
+/* Body and General Layout */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+}
+
+header, footer {
     text-align: center;
-    font-weight: 600;  /* Slightly bolder heading */
+    margin-bottom: 20px;
+}
+
+footer {
+    font-size: 0.9em;
+    color: #888;
+}
+
+/* Form Container */
+.form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Form Elements */
+h2 {
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: #333;
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin: 10px 10px 10px 10px;
 }
 
 label {
     display: block;
-    font-size: 14px;
-    color: #7f8c8d;  /* Softer gray for label text */
-    margin-bottom: 8px;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
-input {
+input[type="text"], input[type="email"], input[type="password"] {
     width: 100%;
-    padding: 14px;
-    font-size: 16px;
+    padding: 10px;
+    margin-top: 5px;
     border: 1px solid #ccc;
-    border-radius: 6px;  /* Slightly rounder input fields */
-    box-sizing: border-box;
-    margin-bottom: 15px;
-    transition: border-color 0.3s ease;
+    border-radius: 4px;
+    font-size: 1em;
 }
 
-input:focus {
-    border-color: #3498db; /* Vibrant blue for focus */
-    outline: none;
-}
-
-.btn {
+button {
     width: 100%;
-    background-color: #3498db;  /* Primary blue for the button */
-    color: white;
-    padding: 14px;
-    font-size: 16px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: #fff;
     border: none;
-    border-radius: 6px;  /* Rounded corners for buttons */
+    border-radius: 4px;
+    font-size: 1.2em;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.btn:hover {
-    background-color: #2980b9;  /* Slightly darker blue for hover */
-    transform: scale(1.05);  /* Slightly enlarge the button on hover */
+button:hover {
+    background-color: #45a049;
 }
 
-.btn:active {
-    background-color: #1c639d;  /* Even darker blue when clicked */
-}
-
-.redirect {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 14px;
-    color: #7f8c8d;  /* Soft gray for secondary text */
-}
-
-.redirect a {
-    color: #3498db;  /* Matching color with buttons for consistency */
+a {
+    color: #007bff;
     text-decoration: none;
-    font-weight: 600;
 }
 
-.redirect a:hover {
+a:hover {
     text-decoration: underline;
 }
 
-.redirect a:focus {
-    outline: none;
-    color: #2980b9;  /* Slightly darker on focus */
-}
-
-/* Responsive design for smaller screens */
-@media (max-width: 480px) {
-    .auth-container {
-        padding: 20px;
-    }
-
-    .auth-container h2 {
-        font-size: 24px;
-    }
-
-    .form-group {
-        margin-bottom: 15px;  /* Less spacing between fields on small screens */
-    }
-
-    input, .btn {
-        font-size: 14px;
-    }
-
-    .btn {
-        padding: 12px;  /* Slightly smaller button size on mobile */
+/* Responsiveness */
+@media (max-width: 600px) {
+    .form-container {
+        padding: 15px;
+        width: 100%;
     }
 }

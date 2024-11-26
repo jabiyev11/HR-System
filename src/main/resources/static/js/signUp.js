@@ -23,8 +23,18 @@ document.getElementById("signUpForm").addEventListener("submit", function (event
         .then((data) => {
             console.log("Data: ", data)
             if (data.success) {
-                alert("Sign Up successful! Verify your account using the OTP sent to your email");
-                window.location.href = "/api/auth/verify-otp";
+                Toastify({
+                    text: "Sign-Up successful! Verify your account using the OTP sent to your email.",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#4CAF50",
+                }).showToast();
+
+                setTimeout(() =>{
+                    window.location.href = `/api/auth/verify-otp?email=${encodeURIComponent(email)}`;
+                }, 3000);
             } else {
                 alert(data.message || "Sign Up failed!"); //modal
             }
