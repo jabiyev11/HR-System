@@ -1,8 +1,10 @@
 package com.example.hr_system.config;
 
+import com.example.hr_system.entity.Role;
 import com.example.hr_system.entity.User;
 import com.example.hr_system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,5 +25,12 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username " + username));
 
         return new CustomUserDetails(user);
+//
+//        String roles = user.getRoles().stream()
+//                .map(Role::getName)
+//                .reduce((a, b) -> a + "," + b)
+//                .orElse("");
+//
+//        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), AuthorityUtils.commaSeparatedStringToAuthorityList(roles));
     }
 }

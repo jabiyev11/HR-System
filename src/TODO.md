@@ -9,3 +9,4 @@
 
 ### [x] Work on the design of the FrontEnd
 ### [ ] Construct the logic of the application
+### [ ] Implement RBAC

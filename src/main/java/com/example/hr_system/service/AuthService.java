@@ -11,16 +11,21 @@ import com.example.hr_system.exception.WrongPasswordException;
 import com.example.hr_system.repository.RoleRepository;
 import com.example.hr_system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +63,8 @@ public class AuthService {
             user.setRoles(Collections.singleton(defaultRole));
             user.setCreatedAt(LocalDateTime.now());
 
+            defaultRole.getUsers().add(user);
+
             String otp = otpService.generateOtp(userRegisterRequest.getEmail());
             emailService.sendOtpEmail(userRegisterRequest.getEmail(), otp);
 
@@ -92,7 +99,13 @@ public class AuthService {
 
         String accessToken = jwtService.generateToken(userDetails);
 
-        return new AuthResponse(accessToken);
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+
+        Set<String> roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+
+        return new AuthResponse(accessToken, roles);
     }
 
     public OtpVerificationResponse verifyOtp(String email, String otp) throws EmailRelatedException {
