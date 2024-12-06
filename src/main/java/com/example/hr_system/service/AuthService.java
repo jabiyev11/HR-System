@@ -7,11 +7,9 @@ import com.example.hr_system.entity.User;
 import com.example.hr_system.exception.EmailRelatedException;
 import com.example.hr_system.exception.UserAlreadyExistsException;
 import com.example.hr_system.exception.UserNotVerifiedException;
-import com.example.hr_system.exception.WrongPasswordException;
 import com.example.hr_system.repository.RoleRepository;
 import com.example.hr_system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -47,12 +45,8 @@ public class AuthService {
             throw new UserAlreadyExistsException("Username is already taken");
         }
 
-        Role defaultRole = roleRepository.findByName("USER")
-                .orElseGet(() ->{
-                    Role newRole = new Role();
-                    newRole.setName("USER");
-                    return roleRepository.save(newRole);
-                });
+        Role role = roleRepository.findByName("USER")
+                .orElseThrow(() -> new IllegalArgumentException("Cannot access"));
 
         try {
             User user = new User();
@@ -60,15 +54,16 @@ public class AuthService {
             user.setEmail(userRegisterRequest.getEmail());
             user.setUsername(userRegisterRequest.getUsername());
             user.setPassword(passwordEncoder.encode(userRegisterRequest.getPassword()));
-            user.setRoles(Collections.singleton(defaultRole));
+            user.setRoles(Collections.singleton(role));
             user.setCreatedAt(LocalDateTime.now());
 
-            defaultRole.getUsers().add(user);
 
             String otp = otpService.generateOtp(userRegisterRequest.getEmail());
             emailService.sendOtpEmail(userRegisterRequest.getEmail(), otp);
 
             userRepository.save(user);
+
+
             return new UserRegisterResponse(true, "Signup successful! OTP sent to your email");
 
         } catch (Exception e) {
@@ -78,12 +73,9 @@ public class AuthService {
 
     public AuthResponse login(AuthRequest authRequest) throws Exception {
 
-        User user = userRepository.findByUsername(authRequest.getUsername())
+        User user = userRepository.findUsernameWithRoles(authRequest.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid username, Try again"));
 
-//        if(!passwordEncoder.matches(authRequest.getPassword(), user.getPassword())){
-//            throw new WrongPasswordException("Invalid password, Try again");
-//        }
 
         if(!user.isVerified()){
             throw new UserNotVerifiedException("Check your email for OTP verification");

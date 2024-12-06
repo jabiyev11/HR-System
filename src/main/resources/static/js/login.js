@@ -14,10 +14,12 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
         .then((response) => response.json())
         .then((data) => {
 
+            const roles = data.roles;
+
             console.log("Data: ", data);
 
             localStorage.setItem('token', data.accessToken);
-            localStorage.setItem('roles', JSON.stringify(data.roles));
+            localStorage.setItem('roles', JSON.stringify(roles));
             if (data.accessToken) {
                 Toastify({
                     text: "Login successful!",
@@ -28,7 +30,7 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
                     backgroundColor: "#4CAF50", // Success green
                 }).showToast();
 
-                const roles = data.roles;
+                const roles = data.role;
 
                 setTimeout(() => {
                     if(roles.includes('HR')){
@@ -37,7 +39,7 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
                     } else if(roles.includes('USER')){
                         window.location.href = "/api/user/dashboard";
                     }
-                }, 3000);
+                });
             } else {
                 alert(data.message || "Invalid Credentials");
             }
