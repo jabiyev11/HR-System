@@ -26,9 +26,6 @@ public class AuthControllerView {
         return "otpVerification";
     }
 
-    @GetMapping("/dashboard")
-    public String getDashboard(){
-        return "dashboard";
-    }
+
 
 }

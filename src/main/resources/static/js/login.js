@@ -3,10 +3,12 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
+
+
     fetch("/api/auth/login", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
         },
         body: JSON.stringify({username, password}),
     })
@@ -14,7 +16,7 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
         .then((response) => response.json())
         .then((data) => {
 
-            const roles = data.roles;
+            const roles = data.role;
 
             console.log("Data: ", data);
 
@@ -30,7 +32,7 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
                     backgroundColor: "#4CAF50", // Success green
                 }).showToast();
 
-                const roles = data.role;
+
 
                 setTimeout(() => {
                     if(roles.includes('HR')){

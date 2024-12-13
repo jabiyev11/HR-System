@@ -73,7 +73,7 @@ public class AuthService {
 
     public AuthResponse login(AuthRequest authRequest) throws Exception {
 
-        User user = userRepository.findUsernameWithRoles(authRequest.getUsername())
+        User user = userRepository.findByUsername(authRequest.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid username, Try again"));
 
 
@@ -84,6 +84,11 @@ public class AuthService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
         );
+
+
+        authentication.getAuthorities().forEach(auth -> {
+            System.out.println("Granted Authority: " + auth.getAuthority());
+        });
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 

@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     setTimeout(() => {
                         window.location.href = "/api/auth/login";
-                    }, 3000);
+                    });
                 } else {
                     alert(data.message || "OTP validation failed");
                 }
