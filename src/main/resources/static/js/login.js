@@ -1,28 +1,29 @@
-document.getElementById("loginForm").addEventListener("submit", function (event) {
+document.getElementById("loginForm").addEventListener("submit", async function  (event) {
     event.preventDefault();
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-
-
-    fetch("/api/auth/login", {
+    const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({username, password}),
-    })
+    });
 
-        .then((response) => response.json())
-        .then((data) => {
+    // console.log("Token: " + data.accessToken);
+    // console.log("Role: " + data.role);
+    const res = response.json()
 
-            const roles = data.role;
+        const data = await res;
+        localStorage.setItem('token', data.accessToken);
 
-            console.log("Data: ", data);
+            localStorage.setItem('role', JSON.stringify(data.role));
 
-            localStorage.setItem('token', data.accessToken);
-            localStorage.setItem('roles', JSON.stringify(roles));
             if (data.accessToken) {
+
+                console.log(localStorage);
+
                 Toastify({
                     text: "Login successful!",
                     duration: 3000,
@@ -34,17 +35,20 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
 
 
 
-                setTimeout(() => {
-                    if(roles.includes('HR')){
-                        console.log('Salam');
+                // setTimeout(() => {
+                    if(data.role.includes('HR')){
                         window.location.href = "/api/hr/dashboard";
-                    } else if(roles.includes('USER')){
-                        window.location.href = "/api/user/dashboard";
+                    } else if(data.role.includes('USER')){
+                        console.log('Salam');
+                        await fetch("/api/user/dashboard",{
+                                headers: {
+                                    "Authorization": data.accessToken
+                                }
+                        });
+                        // window.location.href = "/api/user/dashboard";
                     }
-                });
+                // });
             } else {
                 alert(data.message || "Invalid Credentials");
             }
-        })
-        .catch((error) => console.error("Error: ", error));
 })

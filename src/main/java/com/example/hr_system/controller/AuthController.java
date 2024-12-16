@@ -6,6 +6,7 @@ import com.example.hr_system.exception.InvalidOtpException;
 import com.example.hr_system.exception.UserAlreadyExistsException;
 import com.example.hr_system.service.AuthService;
 import com.example.hr_system.service.OtpService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,8 +24,9 @@ public class AuthController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public AuthResponse login(@RequestBody AuthRequest authRequest) throws Exception{
+    public AuthResponse login(@RequestBody AuthRequest authRequest, HttpServletResponse http) throws Exception{
         return authService.login(authRequest);
+//        return "redirect:/dashboard";
     }
 
 
