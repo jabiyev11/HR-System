@@ -24,9 +24,8 @@ public class AuthController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public AuthResponse login(@RequestBody AuthRequest authRequest, HttpServletResponse http) throws Exception{
+    public AuthResponse login(@RequestBody AuthRequest authRequest) throws Exception{
         return authService.login(authRequest);
-//        return "redirect:/dashboard";
     }
 
 

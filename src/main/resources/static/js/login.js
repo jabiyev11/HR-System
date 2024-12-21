@@ -1,7 +1,8 @@
-document.getElementById("loginForm").addEventListener("submit", async function  (event) {
+document.getElementById("loginForm").addEventListener("submit", async function (event) {
     event.preventDefault();
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
+
 
     const response = await fetch("/api/auth/login", {
         method: "POST",
@@ -11,44 +12,42 @@ document.getElementById("loginForm").addEventListener("submit", async function  
         body: JSON.stringify({username, password}),
     });
 
-    // console.log("Token: " + data.accessToken);
-    // console.log("Role: " + data.role);
-    const res = response.json()
 
-        const data = await res;
-        localStorage.setItem('token', data.accessToken);
+    console.log(response.status);
 
-            localStorage.setItem('role', JSON.stringify(data.role));
+    const data = await response.json();
 
-            if (data.accessToken) {
-
-                console.log(localStorage);
-
-                Toastify({
-                    text: "Login successful!",
-                    duration: 3000,
-                    close: true,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#4CAF50", // Success green
-                }).showToast();
+    console.log(data);
 
 
+    localStorage.setItem('token', data.accessToken);
+    localStorage.setItem('role', JSON.stringify(data.role));
 
-                // setTimeout(() => {
-                    if(data.role.includes('HR')){
-                        window.location.href = "/api/hr/dashboard";
-                    } else if(data.role.includes('USER')){
-                        console.log('Salam');
-                        await fetch("/api/user/dashboard",{
-                                headers: {
-                                    "Authorization": data.accessToken
-                                }
-                        });
-                        // window.location.href = "/api/user/dashboard";
-                    }
-                // });
-            } else {
-                alert(data.message || "Invalid Credentials");
-            }
+    if (data.accessToken) {
+
+        console.log(localStorage);
+
+        Toastify({
+            text: "Login successful!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#4CAF50", // Success green
+        }).showToast();
+
+
+        if (data.role.includes('HR')) {
+            window.location.href = "/api/hr/dashboard";
+        } else if (data.role.includes('USER')) {
+            console.log('Salam');
+            await fetch("/api/user/dashboard", {
+                headers: {
+                    "Authorization": `Bearer ${data.accessToken}`
+                }
+            });
+        }
+    } else {
+        alert(data.message || "Invalid Credentials");
+    }
 })
